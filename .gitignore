@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Logs
+*.log
+backend/*.log
+frontend/*.log
+
+# OS files
+.DS_Store
+
+# Build outputs
+frontend/dist/
+frontend/dist-ssr/
