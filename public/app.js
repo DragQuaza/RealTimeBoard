@@ -989,14 +989,64 @@ function handleMouseUp() {
     }
 }
 
+let pinchStartDist = 0;
+let pinchStartZoom = 1;
+let pinchStartCamera = { x: 0, y: 0 };
+let isTwoFingerGesture = false;
+
+function getTouchDistance(t1, t2) {
+    return Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+}
+
+function getTouchMidpoint(t1, t2) {
+    return { x: (t1.clientX + t2.clientX) / 2, y: (t1.clientY + t2.clientY) / 2 };
+}
+
 function handleTouchStart(e) {
     e.preventDefault();
+    if (e.touches.length === 2) {
+        isTwoFingerGesture = true;
+        pinchStartDist = getTouchDistance(e.touches[0], e.touches[1]);
+        pinchStartZoom = globalCamera.zoom;
+        pinchStartCamera = { x: globalCamera.x, y: globalCamera.y };
+        pinchStartMid = getTouchMidpoint(e.touches[0], e.touches[1]);
+        return;
+    }
+    isTwoFingerGesture = false;
     handleMouseDown(e);
 }
 
+let pinchStartMid = { x: 0, y: 0 };
+
 function handleTouchMove(e) {
     e.preventDefault();
-    handleMouseMove(e);
+    if (e.touches.length === 2 && isTwoFingerGesture) {
+        const dist = getTouchDistance(e.touches[0], e.touches[1]);
+        const mid = getTouchMidpoint(e.touches[0], e.touches[1]);
+        const scale = dist / pinchStartDist;
+        const newZoom = Math.min(Math.max(pinchStartZoom * scale, 0.1), 10);
+
+        // Zoom towards midpoint
+        const canvas = document.getElementById('board');
+        const rect = canvas.getBoundingClientRect();
+        const mx = mid.x - rect.left;
+        const my = mid.y - rect.top;
+
+        globalCamera.zoom = newZoom;
+        globalCamera.x = pinchStartCamera.x + (mid.x - pinchStartMid.x);
+        globalCamera.y = pinchStartCamera.y + (mid.y - pinchStartMid.y);
+
+        // Zoom-correct around midpoint
+        const zoomRatio = newZoom / pinchStartZoom;
+        globalCamera.x = mx - (mx - pinchStartCamera.x) * zoomRatio + (mid.x - pinchStartMid.x);
+        globalCamera.y = my - (my - pinchStartCamera.y) * zoomRatio + (mid.y - pinchStartMid.y);
+
+        updateCanvas();
+        return;
+    }
+    if (!isTwoFingerGesture) {
+        handleMouseMove(e);
+    }
 }
 
 function updateCanvas() {

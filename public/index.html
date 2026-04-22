@@ -118,42 +118,70 @@
 
         <!-- Header / TopNavBar -->
         <nav
-            class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 md:px-12 py-8 bg-transparent backdrop-blur-xl transition-all duration-300">
-            <div class="text-3xl font-bold tracking-tighter text-[#E5E2E1] font-headline uppercase">RealTimeBoard</div>
+            class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 sm:px-6 md:px-12 py-4 sm:py-6 md:py-8 bg-transparent backdrop-blur-xl transition-all duration-300">
+            <div class="text-xl sm:text-2xl md:text-3xl font-bold tracking-tighter text-[#E5E2E1] font-headline uppercase">RealTimeBoard</div>
             <div class="hidden md:flex items-center space-x-12">
                 <a class="font-headline uppercase tracking-tighter text-[#E5E2E1] hover:text-[#CCFF00] transition-colors duration-300"
-                    href="#">Features</a>
+                    href="#middle-section">Features</a>
                 <a class="font-headline uppercase tracking-tighter text-[#CCFF00] border-b-2 border-[#CCFF00] pb-1"
                     href="#">Share board</a>
                 <a class="font-headline uppercase tracking-tighter text-[#E5E2E1] hover:text-[#CCFF00] transition-colors duration-300"
                     href="#">Cloud Sync</a>
             </div>
-            <button id="top-signin-btn"
-                class="font-headline uppercase tracking-tighter text-[#E5E2E1] hover:text-[#CCFF00] transition-colors duration-300 active:scale-95">Sign
-                In</button>
+            <div class="flex items-center gap-4">
+                <button id="top-signin-btn"
+                    class="font-headline uppercase tracking-tighter text-[#E5E2E1] hover:text-[#CCFF00] transition-colors duration-300 active:scale-95 text-sm sm:text-base">Sign
+                    In</button>
+                <!-- Mobile hamburger -->
+                <button id="mobile-nav-toggle" class="md:hidden flex flex-col gap-[5px] p-2" aria-label="Open menu">
+                    <span class="block w-5 h-[2px] bg-[#E5E2E1] transition-all duration-300"></span>
+                    <span class="block w-5 h-[2px] bg-[#E5E2E1] transition-all duration-300"></span>
+                    <span class="block w-5 h-[2px] bg-[#E5E2E1] transition-all duration-300"></span>
+                </button>
+            </div>
         </nav>
+        <!-- Mobile Nav Overlay -->
+        <div id="mobile-nav-overlay" class="fixed inset-0 z-[60] bg-background/95 backdrop-blur-2xl flex flex-col items-center justify-center gap-8 transition-all duration-300 hidden">
+            <button id="mobile-nav-close" class="absolute top-5 right-5 text-[#E5E2E1] p-2" aria-label="Close menu">
+                <span class="material-symbols-outlined text-3xl">close</span>
+            </button>
+            <a class="font-headline text-2xl uppercase tracking-tighter text-[#E5E2E1] hover:text-[#CCFF00] transition-colors duration-300" href="#middle-section" onclick="closeMobileNav()">Features</a>
+            <a class="font-headline text-2xl uppercase tracking-tighter text-[#CCFF00]" href="#" onclick="closeMobileNav()">Share board</a>
+            <a class="font-headline text-2xl uppercase tracking-tighter text-[#E5E2E1] hover:text-[#CCFF00] transition-colors duration-300" href="#" onclick="closeMobileNav()">Cloud Sync</a>
+            <a class="font-headline text-2xl uppercase tracking-tighter text-[#E5E2E1] hover:text-[#CCFF00] transition-colors duration-300" href="#template-gallery" onclick="closeMobileNav()">Templates</a>
+        </div>
+        <script>
+            function closeMobileNav() { document.getElementById('mobile-nav-overlay').classList.add('hidden'); }
+            document.addEventListener('DOMContentLoaded', function() {
+                var toggle = document.getElementById('mobile-nav-toggle');
+                var overlay = document.getElementById('mobile-nav-overlay');
+                var closeBtn = document.getElementById('mobile-nav-close');
+                if (toggle) toggle.addEventListener('click', function() { overlay.classList.remove('hidden'); });
+                if (closeBtn) closeBtn.addEventListener('click', closeMobileNav);
+            });
+        </script>
         <!-- Hero Section -->
-        <main class="relative min-h-screen flex flex-col pt-32 pb-24 px-6 md:px-12 overflow-hidden">
+        <main class="relative min-h-screen flex flex-col pt-24 sm:pt-28 md:pt-32 pb-16 md:pb-24 px-4 sm:px-6 md:px-12 overflow-hidden">
             <section class="relative z-10 flex flex-col items-center justify-center w-full text-center">
                 <div class="max-w-7xl flex flex-col items-center">
                     <h1
-                        class="font-headline font-black text-[15vw] md:text-[12rem] leading-[0.8] tracking-tighter uppercase mb-8">
+                        class="font-headline font-black text-[13vw] sm:text-[14vw] md:text-[12rem] leading-[0.85] tracking-tighter uppercase mb-4 sm:mb-8">
                         RealTime<br />
                         <span class="text-primary">Board</span>
                     </h1>
-                    <div class="flex flex-col items-center gap-12 mt-12">
+                    <div class="flex flex-col items-center gap-6 sm:gap-12 mt-6 sm:mt-12">
                         <div class="space-y-8 flex flex-col items-center">
                             <p
-                                class="font-headline text-2xl md:text-4xl font-light uppercase tracking-tight text-on-surface">
+                                class="font-headline text-lg sm:text-2xl md:text-4xl font-light uppercase tracking-tight text-on-surface">
                                 Draw together.<br />
                                 <span class="text-primary font-bold">In real time.</span> From anywhere.
                             </p>
-                            <div class="flex flex-col sm:flex-row gap-6 pt-4 justify-center">
+                            <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 pt-4 justify-center w-full sm:w-auto">
                                 <button id="start-session-btn"
-                                    class="bg-primary text-on-primary px-10 py-5 font-headline font-bold uppercase tracking-widest text-sm hover:brightness-110 transition-all duration-300 shadow-[0_0_50px_rgba(204,255,0,0.2)] active:scale-95">Start
+                                    class="bg-primary text-on-primary px-8 sm:px-10 py-4 sm:py-5 font-headline font-bold uppercase tracking-widest text-xs sm:text-sm hover:brightness-110 transition-all duration-300 shadow-[0_0_50px_rgba(204,255,0,0.2)] active:scale-95 w-full sm:w-auto">Start
                                     Session</button>
                                 <button id="firebase-signin-btn"
-                                    class="border border-primary/20 text-on-surface px-10 py-5 font-headline font-bold uppercase tracking-widest text-sm hover:border-primary transition-all duration-300 flex items-center justify-center gap-3 active:scale-95"><span
+                                    class="border border-primary/20 text-on-surface px-8 sm:px-10 py-4 sm:py-5 font-headline font-bold uppercase tracking-widest text-xs sm:text-sm hover:border-primary transition-all duration-300 flex items-center justify-center gap-3 active:scale-95 w-full sm:w-auto"><span
                                         class="material-symbols-outlined text-primary">login</span>Sign In with
                                     Google</button>
                             </div>
@@ -165,30 +193,30 @@
             <div class="h-16"></div>
         </main>
     <!-- Template Gallery Section -->
-    <section class="py-24 px-6 md:px-12 w-full bg-surface-container-low border-b border-primary/10"
+    <section class="py-12 sm:py-16 md:py-24 px-4 sm:px-6 md:px-12 w-full bg-surface-container-low border-b border-primary/10"
         id="template-gallery">
         <div class="max-w-7xl mx-auto flex flex-col">
-            <h2 class="font-headline text-5xl md:text-6xl font-black uppercase tracking-tighter mb-4 text-on-surface">
+            <h2 class="font-headline text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter mb-4 text-on-surface">
                 Start from a template</h2>
             <p class="font-body text-on-surface/60 mb-12 text-lg">Click a thumbnail below to instantly open an editable,
                 scalable workspace.</p>
 
-            <div id="landing-templates-container" class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div id="landing-templates-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 md:gap-12">
                 <div class="text-on-surface/50 italic py-12">Loading from SQL server...</div>
             </div>
         </div>
     </section>
     <!-- Bento Grid Section -->
-    <section id="middle-section" class="py-32 px-6 md:px-12 bg-surface-container-lowest">
+    <section id="middle-section" class="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-surface-container-lowest">
         <div class="mb-24">
             <span class="font-headline text-primary uppercase tracking-[0.5em] text-xs font-bold mb-4 block">Real-Time
                 Collaboration</span>
-            <h2 class="font-headline text-6xl md:text-8xl font-bold uppercase tracking-tighter leading-none">Draw
+            <h2 class="font-headline text-3xl sm:text-5xl md:text-8xl font-bold uppercase tracking-tighter leading-none">Draw
                 together.<br />Sync instantly.</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-12 gap-0 border-t border-primary/10">
             <div
-                class="md:col-span-8 p-12 md:p-24 border-b border-primary/10 hover:bg-surface-container-low transition-colors duration-500">
+                class="md:col-span-8 p-6 sm:p-12 md:p-24 border-b border-primary/10 hover:bg-surface-container-low transition-colors duration-500">
                 <div class="max-w-md">
                     <span class="font-headline text-primary text-5xl font-black mb-8 block italic">01</span>
                     <h3 class="font-headline text-3xl font-bold uppercase mb-6 tracking-tight">Real-Time Canvas</h3>
@@ -210,7 +238,7 @@
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHhTjLUM2BrKHtIy2wt8ro78advooa_M1XJGJyMu8CkhhKGhIWpVSgqAQDzuCeNLXg2UaiMqLaw5fghWbgFfY336zJqf7SQ9y5U7HVMIDLRkuKq9-NhM7fM0qEj5i6UUiYLnNzwv7e-M-SZ3_-74cgvpRCSbdLKybMeiRxVoqQDEAhRMywyTCfWHwFf2r2X8ohVXQTrFxXHt8Ti14PztuG3pyOz7X2JyZjcyZCZxNrCutVB8J73yEVI_DyT31jd1PQgc5S9ynxMrrm" />
             </div>
             <div
-                class="md:col-span-8 p-12 md:p-24 border-l border-b border-primary/10 hover:bg-surface-container-low transition-colors duration-500">
+                class="md:col-span-8 p-6 sm:p-12 md:p-24 border-l border-b border-primary/10 hover:bg-surface-container-low transition-colors duration-500">
                 <div class="max-w-md ml-auto text-right">
                     <span class="font-headline text-primary text-5xl font-black mb-8 block italic">02</span>
                     <h3 class="font-headline text-3xl font-bold uppercase mb-6 tracking-tight">Cloud Auto-Save</h3>
@@ -223,9 +251,9 @@
         </div>
     </section>
     <!-- Editorial Feature Section (Asymmetric) -->
-    <section class="relative py-48 px-6 md:px-12 flex flex-col items-center">
-        <div class="absolute left-0 top-0 w-1/2 h-full bg-surface-container-low -z-10"></div>
-        <div class="w-full max-w-7xl grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+    <section class="relative py-16 sm:py-24 md:py-48 px-4 sm:px-6 md:px-12 flex flex-col items-center">
+        <div class="absolute left-0 top-0 w-full md:w-1/2 h-1/2 md:h-full bg-surface-container-low -z-10"></div>
+        <div class="w-full max-w-7xl grid grid-cols-1 md:grid-cols-12 gap-8 sm:gap-12 items-center">
             <div class="md:col-span-5 relative">
                 <div class="absolute -top-12 -left-12 w-full h-full border-2 border-primary/20 -z-10"></div>
                 <img class="w-full shadow-2xl" data-alt="ChatGPT Image"
@@ -235,9 +263,9 @@
                 </div>
             </div>
             <div class="md:col-span-7 md:pl-24">
-                <h4 class="font-headline text-5xl md:text-7xl font-bold uppercase mb-12 leading-tight">Built for <span
+                <h4 class="font-headline text-3xl sm:text-4xl md:text-7xl font-bold uppercase mb-6 sm:mb-12 leading-tight">Built for <span
                         class="text-primary">teams</span> and thinkers.</h4>
-                <div class="flex gap-12">
+                <div class="flex flex-col sm:flex-row gap-6 sm:gap-12">
                     <div class="flex-1 space-y-6">
                         <h5 class="font-headline font-bold uppercase text-primary tracking-widest text-xs">Multi-Tool
                             Support</h5>
@@ -264,14 +292,14 @@
         <span class="font-headline uppercase tracking-widest text-[10px] -rotate-90 origin-left">03. DRAW</span>
     </div>
     <!-- Call to Action -->
-    <section id="bottom-section" class="py-48 px-6 md:px-12 text-center bg-primary">
+    <section id="bottom-section" class="py-16 sm:py-24 md:py-48 px-4 sm:px-6 md:px-12 text-center bg-primary">
         <h2
-            class="font-headline text-on-primary text-6xl md:text-[10rem] font-black uppercase leading-[0.85] tracking-tighter mb-16">
+            class="font-headline text-on-primary text-4xl sm:text-6xl md:text-[10rem] font-black uppercase leading-[0.85] tracking-tighter mb-8 sm:mb-16">
             Start creating<br />together
         </h2>
-        <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+        <div class="flex flex-col md:flex-row justify-center items-center gap-6 sm:gap-8">
             <button id="create-session-btn"
-                class="bg-on-primary text-primary px-16 py-8 font-headline font-black uppercase text-xl tracking-tighter hover:bg-on-primary/90 transition-all active:scale-95 shadow-2xl">Start
+                class="bg-on-primary text-primary px-10 sm:px-16 py-5 sm:py-8 font-headline font-black uppercase text-lg sm:text-xl tracking-tighter hover:bg-on-primary/90 transition-all active:scale-95 shadow-2xl w-full sm:w-auto">Start
                 Drawing</button>
             <p
                 class="font-headline text-on-primary uppercase font-bold tracking-widest text-sm max-w-[200px] text-left">
@@ -283,13 +311,13 @@
 
 
     <!-- Footer -->
-    <footer class="bg-[#0E0E0E] flex flex-col md:flex-row justify-between items-center w-full px-12 py-16">
+    <footer class="bg-[#0E0E0E] flex flex-col items-center md:flex-row md:justify-between w-full px-6 sm:px-12 py-10 sm:py-16 gap-6 text-center md:text-left">
         <div class="mb-8 md:mb-0">
             <div class="text-lg font-black text-[#CCFF00] font-headline">REALTIMEBOARD</div>
             <p class="font-['Space_Grotesk'] text-[10px] uppercase tracking-widest text-[#E5E2E1]/50 mt-2">© 2026
                 REALTIMEBOARD. MADE BY DEBANJAN MAITY</p>
         </div>
-        <div class="flex gap-12">
+        <div class="flex flex-wrap justify-center gap-6 sm:gap-12">
             <a class="font-['Space_Grotesk'] text-[10px] uppercase tracking-widest text-[#E5E2E1]/50 hover:text-[#CCFF00] transition-opacity opacity-80 hover:opacity-100"
                 href="#landing-page">Top</a>
             <a class="font-['Space_Grotesk'] text-[10px] uppercase tracking-widest text-[#E5E2E1]/50 hover:text-[#CCFF00] transition-opacity opacity-80 hover:opacity-100"
@@ -297,7 +325,7 @@
             <a class="font-['Space_Grotesk'] text-[10px] uppercase tracking-widest text-[#E5E2E1]/50 hover:text-[#CCFF00] transition-opacity opacity-80 hover:opacity-100"
                 href="#bottom-section">BOTTOM</a>
         </div>
-        <div class="mt-8 md:mt-0 flex gap-4">
+        <div class="flex gap-4">
             <a href="https://github.com/DragQuaza/Whiteboard-real-time" target="_blank" rel="noopener noreferrer"
                 class="w-8 h-8 border border-primary/20 flex items-center justify-center hover:border-primary cursor-pointer transition-colors">
                 <span class="material-symbols-outlined text-xs text-primary">terminal</span>
@@ -314,7 +342,7 @@
     <div id="room-page" class="flex h-screen w-full overflow-hidden hidden">
         <!-- Sidebar & Toggle Container -->
         <aside id="sidebar"
-            class="w-[280px] h-full bg-[#1c1b1b] border-r border-primary/10 flex flex-col transition-all duration-300 z-[1100] relative shrink-0">
+            class="w-[280px] h-full bg-[#1c1b1b] border-r border-primary/10 flex flex-col transition-all duration-300 z-[1100] md:shrink-0 shrink">
             <div class="p-6 flex flex-col h-full relative w-[280px]">
                 <div class="sidebar-header">
                     <button id="close-sidebar-btn"

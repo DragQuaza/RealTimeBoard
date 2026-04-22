@@ -915,48 +915,286 @@ h1, h2, h3, h4, .font-headline {
     position: relative;
 }
 
+/* ===== MOBILE RESPONSIVE: ≤768px ===== */
 @media (max-width: 768px) {
+
     .toolbar {
-        padding: 10px;
-        gap: 10px;
+        position: relative;
+        padding: 6px 8px;
+        gap: 4px;
+        flex-wrap: wrap;
+        min-height: auto;
+        backdrop-filter: none;
+        background-color: rgba(28, 27, 27, 0.95);
     }
-    
+
+    .toolbar-left {
+        flex: 0 0 auto;
+        gap: 6px;
+        order: 1;
+    }
+
+    .toolbar-brand-slot {
+        flex: 0 0 auto !important;
+        width: auto !important;
+    }
+
+    .toolbar-brand {
+        gap: 6px;
+    }
+
+    .toolbar-brand .font-headline {
+        font-size: 0.65rem !important;
+        letter-spacing: 0.05em;
+    }
+
+    .sync-status {
+        display: none;
+    }
+
+    .toolbar-right {
+        flex: 0 0 auto;
+        gap: 6px;
+        order: 2;
+    }
+
     .tool-group {
-        padding: 8px 12px;
-        gap: 5px;
+        order: 3;
+        flex: 1 1 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 4px 0 2px;
+        gap: 2px;
+        border-top: 1px solid rgba(255,255,255,0.05);
     }
-    
+
+    .tools-container {
+        display: flex;
+        gap: 2px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 2px;
+        max-width: calc(100vw - 40px);
+    }
+
+    .tools-container::-webkit-scrollbar {
+        display: none;
+    }
+
     .tool-btn {
-        padding: 8px;
-        font-size: 1.1rem;
+        padding: 7px;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+        min-width: 34px;
+        min-height: 34px;
     }
-    
+
+    .divider {
+        height: 22px;
+        margin: 0 3px;
+    }
+
+    /* --- Session actions: fixed bottom bar --- */
     .session-actions {
         position: fixed;
-        bottom: 20px;
-        left: 20px;
-        gap: 10px;
-        flex-wrap: wrap;
-        max-width: calc(100vw - 110px);
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1001;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        background: rgba(28, 27, 27, 0.95);
+        backdrop-filter: blur(16px);
+        border-top: 1px solid rgba(204, 255, 0, 0.1);
+        max-width: 100%;
+        flex-wrap: nowrap;
     }
-    
+
+    .session-actions .btn-secondary {
+        padding: 8px 14px;
+        font-size: 0.7rem;
+        white-space: nowrap;
+    }
+
     .menu-btn {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
+        bottom: 10px;
+        right: 12px;
+        z-index: 1002;
+        padding: 8px;
+        font-size: 1.2rem;
+        background: rgba(28, 27, 27, 0.95);
+        border: 1px solid rgba(204, 255, 0, 0.1);
     }
-    
+
     .menu-dropdown {
+        position: fixed;
         top: auto;
-        bottom: 80px;
+        bottom: 56px;
+        right: 8px;
+        left: 8px;
+        max-width: 100%;
+        min-width: auto;
     }
-    
+
     #chat-btn {
         position: static;
     }
 
     .presence-pill {
         display: none !important;
+    }
+
+    /* --- Color picker: prevent off-screen --- */
+    .color-picker-wrapper {
+        position: static;
+    }
+
+    .color-dropdown {
+        position: fixed;
+        top: auto;
+        bottom: 56px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100vw - 24px);
+        max-width: 280px;
+    }
+
+    .color-preview {
+        width: 30px;
+        height: 30px;
+    }
+
+    /* --- Canvas: account for toolbar height --- */
+    #board {
+        top: 0;
+    }
+
+    /* --- Modals: full-width on small screens --- */
+    .modal-content {
+        width: 95%;
+        max-width: 95%;
+        padding: 24px 16px;
+    }
+
+    .modal-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .chat-modal-content {
+        width: 95%;
+        max-width: 95%;
+        height: 75vh;
+    }
+
+    .export-modal-content {
+        max-width: 95%;
+    }
+
+    .export-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .export-actions .btn-primary,
+    .export-actions .btn-secondary {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* --- Toast: above bottom bar --- */
+    .toast {
+        bottom: 70px;
+    }
+
+    /* --- Sidebar toggle on mobile --- */
+    #sidebar-toggle {
+        left: 12px !important;
+        top: 8px !important;
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* ===== SMALL MOBILE: ≤480px ===== */
+@media (max-width: 480px) {
+
+    .toolbar {
+        padding: 4px 6px;
+    }
+
+    .toolbar-brand .font-headline {
+        font-size: 0.6rem !important;
+    }
+
+    .tool-btn {
+        padding: 6px;
+        min-width: 32px;
+        min-height: 32px;
+        font-size: 0.85rem;
+    }
+
+    .session-actions .btn-secondary {
+        padding: 6px 10px;
+        font-size: 0.65rem;
+    }
+
+    .modal-content {
+        padding: 18px 12px;
+    }
+
+    .modal-header h2 {
+        font-size: 1.1rem;
+    }
+
+    .btn-primary {
+        padding: 10px 20px;
+        font-size: 0.8rem;
+    }
+
+    .btn-secondary {
+        padding: 8px 14px;
+        font-size: 0.75rem;
+    }
+
+    .color-dropdown {
+        max-width: 240px;
+    }
+
+    .color-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px;
+    }
+
+    .color-btn {
+        width: 26px;
+        height: 26px;
+    }
+}
+
+/* ===== TABLET: ≤1024px ===== */
+@media (max-width: 1024px) and (min-width: 769px) {
+
+    .toolbar {
+        padding: 10px 16px;
+    }
+
+    .toolbar-brand-slot {
+        flex: 0 0 180px;
+        width: 180px;
+    }
+
+    .tool-btn {
+        padding: 8px;
+    }
+
+    .tools-container {
+        gap: 4px;
     }
 }
 
@@ -1069,6 +1307,7 @@ h1, h2, h3, h4, .font-headline {
         left: 0;
         top: 0;
         height: 100%;
+        width: 280px !important;
         z-index: 2000;
         transform: translateX(-100%);
     }
