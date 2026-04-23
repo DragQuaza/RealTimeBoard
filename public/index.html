@@ -314,11 +314,6 @@
     </div>
 
     <div id="room-page" class="flex h-screen w-full overflow-hidden hidden">
-        <!-- Mobile Sidebar Toggle -->
-        <button id="mobile-sidebar-toggle" class="fixed top-1/2 left-0 -translate-y-1/2 z-[3000] w-8 h-16 bg-[#1c1b1b]/95 backdrop-blur-md border border-[#ccff00]/30 border-l-0 rounded-r-lg flex items-center justify-center lg:hidden shadow-[0_0_15px_rgba(204,255,0,0.15)] active:bg-[#ccff00]/10 transition-all">
-            <span class="material-symbols-outlined text-primary text-[24px]">chevron_right</span>
-        </button>
-
         <!-- Sidebar & Toggle Container -->
         <aside id="sidebar"
             class="w-[280px] h-full bg-[#1c1b1b] border-r border-primary/10 flex flex-col transition-all duration-300 z-[1100] md:shrink-0 shrink">
@@ -445,15 +440,18 @@
                     <button id="undo-btn" class="tool-btn" title="Undo"><i class="fas fa-undo"></i></button>
                     <button id="redo-btn" class="tool-btn" title="Redo"><i class="fas fa-redo"></i></button>
                 </div>
-                <div class="toolbar-right">
-                    <div class="session-actions">
-                        <button id="live-session-btn" class="btn-secondary">Share board</button>
-                        <button id="participants-btn" class="btn-secondary hidden">People <span
-                                id="participants-count-pill">0</span></button>
-                        <button id="chat-btn" class="btn-secondary hidden"><i class="fas fa-comment"></i><span
-                                id="chat-badge" class="chat-badge hidden">0</span></button>
+                <div class="toolbar-right w-full flex items-center">
+                    <button id="mobile-sidebar-toggle" class="menu-btn lg:hidden" title="Drawing History"><span class="material-symbols-outlined text-[20px]">last_page</span></button>
+                    <div class="flex items-center gap-2 sm:gap-3 ml-auto">
+                        <div class="session-actions">
+                            <button id="live-session-btn" class="btn-secondary">Share board</button>
+                            <button id="participants-btn" class="btn-secondary hidden">People <span
+                                    id="participants-count-pill">0</span></button>
+                            <button id="chat-btn" class="btn-secondary hidden"><i class="fas fa-comment"></i><span
+                                    id="chat-badge" class="chat-badge hidden">0</span></button>
+                        </div>
+                        <button id="menu-btn" class="menu-btn"><i class="fas fa-bars"></i></button>
                     </div>
-                    <button id="menu-btn" class="menu-btn"><i class="fas fa-bars"></i></button>
                 </div>
             </div>
 
