@@ -1038,9 +1038,22 @@ h1, h2, h3, h4, .font-headline {
         top: auto;
         bottom: 56px;
         right: 8px;
-        left: 8px;
-        max-width: 100%;
-        min-width: auto;
+        left: auto;
+        max-width: 280px;
+        min-width: 200px;
+    }
+
+    #mobile-sidebar-toggle {
+        position: fixed;
+        bottom: 10px;
+        left: 12px;
+        right: auto;
+        z-index: 1002;
+        padding: 8px;
+        font-size: 1.2rem;
+        background: rgba(28, 27, 27, 0.95);
+        border: 1px solid rgba(204, 255, 0, 0.1);
+        display: flex !important;
     }
 
     #chat-btn {
