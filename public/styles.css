@@ -1398,26 +1398,6 @@ h1, h2, h3, h4, .font-headline {
     left: 16px !important;
 }
 
-/* Always show toggle on mobile as a left-edge handle */
-@media (max-width: 1024px) {
-    #sidebar:not(.open) ~ #sidebar-toggle {
-        opacity: 1 !important;
-        pointer-events: auto !important;
-        left: 0 !important;
-        top: 50% !important;
-        transform: translateY(-50%) !important;
-        border-radius: 0 8px 8px 0 !important;
-        width: 32px !important;
-        height: 64px !important;
-        background: rgba(28, 27, 27, 0.95) !important;
-        border-left: none !important;
-    }
-    #sidebar.open ~ #sidebar-toggle {
-        opacity: 0 !important;
-        pointer-events: none !important;
-    }
-}
-
 #close-sidebar-btn {
     width: 32px;
     height: 32px;
