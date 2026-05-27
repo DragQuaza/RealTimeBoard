@@ -40,6 +40,10 @@ let selectedShapeIndex = null;
 let isDraggingShape = false;
 let shapeDragOffset = { x: 0, y: 0 };
 let activeResizeHandle = null;
+let isToolLocked = true;
+let isPanningCanvas = false;
+let panStart = { x: 0, y: 0, cameraX: 0, cameraY: 0 };
+let activateToolByName = () => {};
 
 const DEFAULT_CANVAS_COLOR = '#131313';
 
@@ -495,6 +499,18 @@ function initCanvas() {
 
     canvas.addEventListener('mousedown', function(e) {
         const mouse = getOffset(e, e.target);
+
+        if (currentTool === 'hand') {
+            isPanningCanvas = true;
+            canvas.style.cursor = 'grabbing';
+            panStart = {
+                x: e.clientX,
+                y: e.clientY,
+                cameraX: globalCamera.x,
+                cameraY: globalCamera.y
+            };
+            return;
+        }
         
         if (currentTool === 'select') {
             let found = false;
@@ -505,9 +521,15 @@ function initCanvas() {
                 
                 let cx, cy, cw, ch;
                 if (ele.element === 'circle') {
-                    cx = ele.offsetX - ele.width/2; cy = ele.offsetY - ele.height/2; cw = ele.width; ch = ele.height;
+                    if (ele.startX !== undefined || ele.startY !== undefined) {
+                        cx = ele.offsetX; cy = ele.offsetY; cw = ele.width; ch = ele.height;
+                    } else {
+                        cx = ele.offsetX - ele.width/2; cy = ele.offsetY - ele.height/2; cw = ele.width; ch = ele.height;
+                    }
                 } else if (ele.element === 'line' || ele.element === 'arrow') {
                     cx = Math.min(ele.offsetX, ele.width); cy = Math.min(ele.offsetY, ele.height); cw = Math.max(ele.offsetX, ele.width) - cx; ch = Math.max(ele.offsetY, ele.height) - cy;
+                } else if (ele.element === 'rect' || ele.element === 'diamond') {
+                    cx = Math.min(ele.offsetX, ele.offsetX + ele.width); cy = Math.min(ele.offsetY, ele.offsetY + ele.height); cw = Math.abs(ele.width); ch = Math.abs(ele.height);
                 } else {
                     cx = ele.offsetX; cy = ele.offsetY; cw = ele.width || 0; ch = ele.height || 0;
                 }
@@ -632,6 +654,14 @@ function initCanvas() {
 
     canvas.addEventListener('mousemove', function(e) {
         const mouse = getOffset(e, e.target);
+
+        if (isPanningCanvas) {
+            globalCamera.x = panStart.cameraX + (e.clientX - panStart.x);
+            globalCamera.y = panStart.cameraY + (e.clientY - panStart.y);
+            updateCanvas();
+            return;
+        }
+
         if (currentTool === 'select' && isDraggingShape && selectedShapeIndex !== null) {
             const ele = elements[selectedShapeIndex];
             const dx = (mouse.x - shapeDragOffset.x) - ele.offsetX;
@@ -671,6 +701,12 @@ function initCanvas() {
     });
 
     canvas.addEventListener('mouseup', function(e) {
+        if (isPanningCanvas) {
+            isPanningCanvas = false;
+            canvas.style.cursor = currentTool === 'hand' ? 'grab' : 'crosshair';
+            return;
+        }
+
         if (currentTool === 'select' && isDraggingShape && selectedShapeIndex !== null) {
             isDraggingShape = false;
             if (isLive && socket) {
@@ -925,6 +961,8 @@ function handleMouseDown(e) {
         currentElement = {
             offsetX: x,
             offsetY: y,
+            startX: x,
+            startY: y,
             stroke: currentColor,
             element: currentTool,
             strokeWidth: strokeWidth
@@ -949,7 +987,7 @@ function handleMouseMove(e) {
     
     if (!isDrawing || !currentElement) return;
     
-    if (currentTool === 'rect') {
+    if (currentTool === 'rect' || currentTool === 'diamond') {
         currentElement.width = x - currentElement.offsetX;
         currentElement.height = y - currentElement.offsetY;
     } else if (currentTool === 'line' || currentTool === 'arrow') {
@@ -958,17 +996,24 @@ function handleMouseMove(e) {
     } else if (currentTool === 'pencil' || currentTool === 'eraser') {
         currentElement.path.push([x, y]);
     } else if (currentTool === 'circle') {
-        const radius = Math.sqrt(
-            Math.pow(x - currentElement.offsetX, 2) + Math.pow(y - currentElement.offsetY, 2)
-        );
-        currentElement.width = 2 * radius;
-        currentElement.height = 2 * radius;
+        const startX = currentElement.startX ?? currentElement.offsetX;
+        const startY = currentElement.startY ?? currentElement.offsetY;
+        currentElement.offsetX = Math.min(startX, x);
+        currentElement.offsetY = Math.min(startY, y);
+        currentElement.width = Math.abs(x - startX);
+        currentElement.height = Math.abs(y - startY);
     }
     
     updateCanvas();
 }
 
 function handleMouseUp() {
+    const finishedTool = currentElement?.element;
+
+    if (!isDrawing && !currentElement) {
+        return;
+    }
+
     if (isDrawing && currentElement) {
         history = [];
     }
@@ -986,6 +1031,10 @@ function handleMouseUp() {
     // Save to Firestore
     if (window.saveCanvasToFirestore && roomId && roomId.trim() !== '') {
         window.saveCanvasToFirestore(roomId, elements, canvasColor);
+    }
+
+    if (!isToolLocked && ['rect', 'diamond', 'circle', 'line', 'arrow'].includes(finishedTool)) {
+        activateToolByName('select');
     }
 }
 
@@ -1070,13 +1119,34 @@ function updateCanvas() {
         }
 
         if (ele.element === 'rect') {
+            const x = Math.min(ele.offsetX, ele.offsetX + (ele.width || 0));
+            const y = Math.min(ele.offsetY, ele.offsetY + (ele.height || 0));
+            const width = Math.abs(ele.width || 0);
+            const height = Math.abs(ele.height || 0);
             roughCanvas.draw(generator.rectangle(
-                ele.offsetX, ele.offsetY, ele.width, ele.height, {
+                x, y, width, height, {
                     stroke: ele.stroke,
                     roughness: 0,
                     strokeWidth: ele.strokeWidth
                 }
             ));
+        } else if (ele.element === 'diamond') {
+            const x = Math.min(ele.offsetX, ele.offsetX + (ele.width || 0));
+            const y = Math.min(ele.offsetY, ele.offsetY + (ele.height || 0));
+            const width = Math.abs(ele.width || 0);
+            const height = Math.abs(ele.height || 0);
+            const points = [
+                [x + width / 2, y],
+                [x + width, y + height / 2],
+                [x + width / 2, y + height],
+                [x, y + height / 2],
+                [x + width / 2, y]
+            ];
+            roughCanvas.linearPath(points, {
+                stroke: ele.stroke,
+                roughness: 0,
+                strokeWidth: ele.strokeWidth
+            });
         } else if (ele.element === 'line') {
             roughCanvas.draw(generator.line(
                 ele.offsetX, ele.offsetY, ele.width, ele.height, {
@@ -1118,8 +1188,14 @@ function updateCanvas() {
                 strokeWidth: ele.strokeWidth
             });
         } else if (ele.element === 'circle') {
+            const isBoundingBoxCircle = ele.startX !== undefined || ele.startY !== undefined;
+            const centerX = isBoundingBoxCircle ? ele.offsetX + (ele.width || 0) / 2 : ele.offsetX;
+            const centerY = isBoundingBoxCircle ? ele.offsetY + (ele.height || 0) / 2 : ele.offsetY;
             roughCanvas.draw(generator.ellipse(
-                ele.offsetX, ele.offsetY, ele.width, ele.height, {
+                centerX,
+                centerY,
+                ele.width,
+                ele.height, {
                     stroke: ele.stroke,
                     roughness: 0,
                     strokeWidth: ele.strokeWidth
@@ -1172,15 +1248,25 @@ function drawSelectionBox(ctx, ele) {
 
     let x, y, w, h;
     if (ele.element === 'circle') {
-        x = ele.offsetX - ele.width / 2;
-        y = ele.offsetY - ele.height / 2;
+        if (ele.startX !== undefined || ele.startY !== undefined) {
+            x = ele.offsetX;
+            y = ele.offsetY;
+        } else {
+            x = ele.offsetX - ele.width / 2;
+            y = ele.offsetY - ele.height / 2;
+        }
         w = ele.width;
         h = ele.height;
-    } else if (ele.element === 'line') {
+    } else if (ele.element === 'line' || ele.element === 'arrow') {
         x = Math.min(ele.offsetX, ele.width);
         y = Math.min(ele.offsetY, ele.height);
         w = Math.max(ele.offsetX, ele.width) - x;
         h = Math.max(ele.offsetY, ele.height) - y;
+    } else if (ele.element === 'rect' || ele.element === 'diamond') {
+        x = Math.min(ele.offsetX, ele.offsetX + ele.width);
+        y = Math.min(ele.offsetY, ele.offsetY + ele.height);
+        w = Math.abs(ele.width);
+        h = Math.abs(ele.height);
     } else {
         x = ele.offsetX;
         y = ele.offsetY;
@@ -1202,19 +1288,83 @@ function redrawCanvas() {
 
 function initTools() {
     const eraserCursor = document.getElementById('eraser-cursor');
+    const toolButtons = document.querySelectorAll('.tool-btn[data-tool]');
+    const lockBtn = document.getElementById('tool-lock-btn');
+    const imageUploadBtn = document.getElementById('image-upload-btn');
+    const imageUploadInput = document.getElementById('image-upload-input');
 
-    document.querySelectorAll('.tool-btn[data-tool]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.tool-btn[data-tool]').forEach((toolBtn) => {
-                toolBtn.classList.remove('active');
-            });
-
-            btn.classList.add('active');
-            currentTool = btn.dataset.tool;
-
-            if (!eraserCursor) return;
-            eraserCursor.classList.toggle('hidden', currentTool !== 'eraser');
+    function setActiveTool(btn) {
+        toolButtons.forEach((toolBtn) => {
+            toolBtn.classList.remove('active');
         });
+
+        btn.classList.add('active');
+        currentTool = btn.dataset.tool;
+
+        const canvas = document.getElementById('board');
+        if (canvas) {
+            canvas.classList.toggle('eraser-mode', currentTool === 'eraser');
+            canvas.style.cursor = currentTool === 'hand' ? 'grab' : 'crosshair';
+        }
+
+        if (!eraserCursor) return;
+        eraserCursor.classList.toggle('hidden', currentTool !== 'eraser');
+    }
+
+    activateToolByName = (toolName) => {
+        const btn = [...toolButtons].find((toolBtn) => toolBtn.dataset.tool === toolName);
+        if (btn) setActiveTool(btn);
+    };
+
+    toolButtons.forEach((btn) => {
+        btn.addEventListener('click', () => setActiveTool(btn));
+    });
+
+    if (lockBtn) {
+        lockBtn.classList.toggle('active', isToolLocked);
+        const icon = lockBtn.querySelector('.material-symbols-outlined');
+        if (icon) icon.textContent = isToolLocked ? 'lock' : 'lock_open';
+        lockBtn.addEventListener('click', () => {
+            isToolLocked = !isToolLocked;
+            lockBtn.classList.toggle('active', isToolLocked);
+            if (icon) icon.textContent = isToolLocked ? 'lock' : 'lock_open';
+        });
+    }
+
+    if (imageUploadBtn && imageUploadInput) {
+        imageUploadBtn.addEventListener('click', () => imageUploadInput.click());
+        imageUploadInput.addEventListener('change', (event) => {
+            const file = event.target.files?.[0];
+            if (!file || !file.type.startsWith('image/')) return;
+
+            const reader = new FileReader();
+            reader.onload = (readerEvent) => {
+                const canvas = document.getElementById('board');
+                const x = ((canvas?.clientWidth || window.innerWidth) / 2 - globalCamera.x) / globalCamera.zoom;
+                const y = ((canvas?.clientHeight || window.innerHeight) / 2 - globalCamera.y) / globalCamera.zoom;
+                addImageToCanvas(readerEvent.target.result, x, y);
+                imageUploadInput.value = '';
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    document.addEventListener('keydown', (event) => {
+        const target = event.target;
+        const isTyping = target?.matches?.('input, textarea, [contenteditable="true"]');
+        if (isTyping || event.metaKey || event.ctrlKey || event.altKey) return;
+
+        if (event.key === '9' && imageUploadInput) {
+            event.preventDefault();
+            imageUploadInput.click();
+            return;
+        }
+
+        const btn = [...toolButtons].find((toolBtn) => toolBtn.dataset.shortcut === event.key);
+        if (!btn) return;
+
+        event.preventDefault();
+        setActiveTool(btn);
     });
 
     if (eraserCursor) {

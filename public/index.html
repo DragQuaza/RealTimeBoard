@@ -352,7 +352,6 @@
                         <div class="flex-1 min-w-0">
                             <div id="sidebar-user-name" class="text-sm font-headline font-bold truncate text-[#E5E2E1]">
                                 User</div>
-                            <div class="text-[10px] text-primary uppercase tracking-widest font-bold">Pro Plan</div>
                         </div>
                         <button id="sidebar-logout-btn"
                             class="w-8 h-8 flex items-center justify-center rounded-md bg-surface-container-highest hover:bg-red-500/20 text-on-surface/40 hover:text-red-500 transition-all border border-transparent hover:border-red-500/30"
@@ -393,20 +392,27 @@
                 </div>
                 <div class="tool-group">
                     <div class="tools-container">
-                        <button class="tool-btn" data-tool="select" title="Select / Move / Resize"><span
+                        <button class="tool-btn" id="tool-lock-btn" title="Keep selected tool active"><span
+                                class="material-symbols-outlined text-[16px]">lock_open</span></button>
+                        <button class="tool-btn" data-tool="hand" title="Hand / Pan"><i class="far fa-hand-paper"></i></button>
+                        <button class="tool-btn" data-tool="select" data-shortcut="1" title="Select / Move / Resize (1)"><span
                                 class="material-symbols-outlined text-[16px]">ads_click</span></button>
-                        <button class="tool-btn active" data-tool="pencil" title="Pencil"><i
+                        <button class="tool-btn active" data-tool="pencil" data-shortcut="7" title="Pencil (7)"><i
                                 class="fas fa-pencil-alt"></i></button>
-                        <button class="tool-btn" data-tool="line" title="Line"><i class="fas fa-slash"></i></button>
-                        <button class="tool-btn" data-tool="arrow" title="Arrow"><i
+                        <button class="tool-btn" data-tool="line" data-shortcut="6" title="Line (6)"><i class="fas fa-slash"></i></button>
+                        <button class="tool-btn" data-tool="arrow" data-shortcut="5" title="Arrow (5)"><i
                                 class="fas fa-long-arrow-alt-right"></i></button>
-                        <button class="tool-btn" data-tool="rect" title="Rectangle"><i
+                        <button class="tool-btn" data-tool="rect" data-shortcut="2" title="Rectangle (2)"><i
                                 class="far fa-square"></i></button>
-                        <button class="tool-btn" data-tool="circle" title="Circle"><i
+                        <button class="tool-btn" data-tool="diamond" data-shortcut="3" title="Diamond (3)"><span
+                                class="material-symbols-outlined text-[16px]">change_history</span></button>
+                        <button class="tool-btn" data-tool="circle" data-shortcut="4" title="Circle (4)"><i
                                 class="far fa-circle"></i></button>
-                        <button class="tool-btn" data-tool="eraser" title="Eraser"><i
+                        <button class="tool-btn" data-tool="eraser" data-shortcut="0" title="Eraser (0)"><i
                                 class="fas fa-eraser"></i></button>
-                        <button class="tool-btn" data-tool="text" title="Text"><i class="fas fa-font"></i></button>
+                        <button class="tool-btn" data-tool="text" data-shortcut="8" title="Text (8)"><i class="fas fa-font"></i></button>
+                        <button class="tool-btn" id="image-upload-btn" title="Insert Image (9)"><i class="far fa-image"></i></button>
+                        <input id="image-upload-input" type="file" accept="image/*" class="hidden">
                         <div class="color-picker-wrapper">
                             <div id="current-color" class="color-preview"></div>
                             <div id="color-picker-dropdown" class="color-dropdown hidden">
