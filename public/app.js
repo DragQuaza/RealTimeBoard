@@ -1884,10 +1884,13 @@ async function loadUserHistory() {
         renderHistory(rooms);
     } catch (e) {
         console.error("Error loading history:", e);
+        const message = e?.code === 'permission-denied'
+            ? 'Check Firestore rules for this signed-in user.'
+            : 'Cloud history could not be loaded. Check Firebase config and network access.';
         historyList.innerHTML = `
             <div class="px-2 py-4 text-center">
                 <div class="text-[10px] text-red-400 uppercase tracking-widest font-bold mb-2">Sync Error</div>
-                <div class="text-[10px] text-on-surface/50 leading-relaxed">Ensure composite index exists or wait a few minutes.</div>
+                <div class="text-[10px] text-on-surface/50 leading-relaxed">${message}</div>
                 <button onclick="loadUserHistory()" class="mt-4 text-[10px] bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-1.5 rounded flex items-center justify-center gap-2 mx-auto hover:bg-red-500/20 transition-all font-headline font-bold uppercase tracking-widest">
                     <span class="material-symbols-outlined text-[12px]">refresh</span> Retry
                 </button>

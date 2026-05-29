@@ -601,7 +601,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, query, where, orderBy, getDocs, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const topSignInBtn = document.getElementById('top-signin-btn');
         const heroSignInBtn = document.getElementById('firebase-signin-btn');
@@ -725,11 +725,6 @@
             });
         }
 
-        function isFirestoreIndexError(error) {
-            return error?.code === 'failed-precondition' ||
-                (typeof error?.message === 'string' && error.message.toLowerCase().includes('index'));
-        }
-
         window.saveCanvasToFirestore = async (roomId, elements, canvasColor) => {
             if (!firebaseEnabled || !db || !roomId || typeof roomId !== 'string' || roomId.trim() === '') return;
 
@@ -784,28 +779,12 @@
         window.getUserRoomsFromFirestore = async () => {
             if (!firebaseEnabled || !auth.currentUser) return [];
             const roomsCollection = collection(db, "rooms");
-
-            try {
-                const indexedQuery = query(
-                    roomsCollection,
-                    where("ownerId", "==", auth.currentUser.uid),
-                    orderBy("updatedAt", "desc")
-                );
-                const querySnapshot = await getDocs(indexedQuery);
-                return mapRoomsSnapshot(querySnapshot);
-            } catch (error) {
-                if (!isFirestoreIndexError(error)) {
-                    throw error;
-                }
-
-                console.warn("Falling back to client-side history sorting because the Firestore index is unavailable.", error);
-                const fallbackQuery = query(
-                    roomsCollection,
-                    where("ownerId", "==", auth.currentUser.uid)
-                );
-                const querySnapshot = await getDocs(fallbackQuery);
-                return sortRoomsByUpdatedAtDesc(mapRoomsSnapshot(querySnapshot));
-            }
+            const userRoomsQuery = query(
+                roomsCollection,
+                where("ownerId", "==", auth.currentUser.uid)
+            );
+            const querySnapshot = await getDocs(userRoomsQuery);
+            return sortRoomsByUpdatedAtDesc(mapRoomsSnapshot(querySnapshot));
         };
 
         window.updateRoomTitleInFirestore = async (roomId, title) => {
